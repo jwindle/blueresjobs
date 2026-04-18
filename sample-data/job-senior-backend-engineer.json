@@ -1,0 +1,53 @@
+{
+  "postName": "Senior Backend Engineer – Acme Data Corporation 2025",
+  "jobTitle": "Senior Backend Engineer",
+  "jobLocation": "Remote (US)",
+  "employmentType": "full-time",
+  "datePosted": "2025-01-01",
+  "validThrough": "2025-06-30",
+  "shortDescription": "Design and build the systems that ingest, store, and index job postings and resumes at scale.",
+  "longDescription": "As a Senior Backend Engineer at Acme Data Corporation, you will own the data layer that everything else depends on. Your systems will ingest job postings and resumes from multiple sources, normalize and store them, and make them searchable and retrievable at low latency.\n\nThis is a systems-focused role. You will make meaningful decisions about database schemas, indexing strategies, cloud infrastructure, and API design. You will work closely with the ML team to ensure that the data they need is available in the right shape, and with the product team to expose that data through reliable APIs.\n\nWe run on cloud infrastructure (AWS or GCP) and value services that are simple to operate, easy to reason about, and built to handle failure gracefully.",
+  "jobBenefits": "- Competitive salary and equity\n- Fully remote with flexible hours\n- Health, dental, and vision insurance\n- $2,500 annual learning and conference budget\n- Home office stipend",
+  "estimatedSalary": {
+    "min": 160000,
+    "max": 210000,
+    "currency": "USD",
+    "comment": "Base salary; total comp includes equity"
+  },
+  "jobTraits": [
+    {
+      "key": "Responsibilities",
+      "values": [
+        "Design and operate ingestion pipelines that pull job postings and resumes from external sources and normalize them into a consistent internal schema",
+        "Own the database layer — schema design, query optimization, migrations, and ongoing performance tuning",
+        "Build and maintain full-text and vector search indexes that power candidate and job discovery",
+        "Expose clean, versioned APIs consumed by the product frontend and ML pipelines",
+        "Ensure services are observable, with structured logging, metrics, and on-call runbooks",
+        "Collaborate with the ML team to deliver precomputed features and raw data in formats their pipelines require"
+      ]
+    }
+  ],
+  "employeeTraits": [
+    {
+      "key": "Requirements",
+      "values": [
+        "5+ years of backend engineering experience building and operating production services",
+        "Strong command of at least one relational database — schema design, indexing, and query optimization in PostgreSQL or equivalent",
+        "Hands-on experience deploying and running services on AWS or GCP",
+        "Working knowledge of full-text or vector search systems such as Elasticsearch, OpenSearch, or pgvector",
+        "Solid API design instincts — RESTful or RPC, versioning, error handling, and backwards compatibility",
+        "Experience writing testable, well-documented code and participating in rigorous code review"
+      ]
+    },
+    {
+      "key": "Nice-to-haves",
+      "values": [
+        "Experience ingesting and normalizing data from heterogeneous external sources or third-party APIs",
+        "Familiarity with event streaming systems such as Kafka or Google Pub/Sub",
+        "Prior work on search-heavy or data-intensive products",
+        "Exposure to ML feature engineering or data pipeline workflows",
+        "Experience with infrastructure-as-code tools such as Terraform or Pulumi"
+      ]
+    }
+  ]
+}

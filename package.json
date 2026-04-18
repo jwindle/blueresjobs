@@ -1,0 +1,29 @@
+{
+  "name": "blueresjobs-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@atproto/api": "^0.13.23",
+    "@atproto/oauth-client-node": "^0.3.0",
+    "@tailwindcss/postcss": "^4.2.2",
+    "@upstash/redis": "^1.37.0",
+    "iron-session": "^8.0.4",
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "postcss": "^8.5.1",
+    "tailwindcss": "^4.2.2",
+    "typescript": "^5.7.3"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "postName": "Senior ML Engineer – Acme Data Corporation 2025",
+  "jobTitle": "Senior Machine Learning Engineer",
+  "jobLocation": "Remote (US)",
+  "employmentType": "full-time",
+  "datePosted": "2025-01-01",
+  "validThrough": "2025-06-30",
+  "shortDescription": "Build and operate the production ML pipelines that power recruiter-candidate matching at scale.",
+  "longDescription": "As a Senior ML Engineer at Acme Data Corporation, you will bridge the gap between research and production. You will take models from our data science team and build the infrastructure needed to train, evaluate, deploy, and monitor them reliably.\n\nOur matching system processes large volumes of structured and unstructured data — job descriptions, resumes, behavioral signals — and must produce recommendations that are both accurate and fast. You will design the training pipelines, feature stores, and serving infrastructure that make this possible.\n\nYou will work primarily in Python using PyTorch and PyTorch Lightning, and will be expected to write production-grade code: tested, observable, and maintainable by the team.",
+  "jobBenefits": "- Competitive salary and equity\n- Fully remote with flexible hours\n- Health, dental, and vision insurance\n- $2,500 annual learning and conference budget\n- Home office stipend",
+  "estimatedSalary": {
+    "min": 170000,
+    "max": 220000,
+    "currency": "USD",
+    "comment": "Base salary; total comp includes equity"
+  },
+  "jobTraits": [
+    {
+      "key": "Responsibilities",
+      "values": [
+        "Design, build, and maintain distributed training pipelines using PyTorch and PyTorch Lightning",
+        "Develop and operate a feature store that serves both training and real-time inference workloads",
+        "Build model serving infrastructure with latency and reliability SLOs",
+        "Instrument pipelines with metrics, alerts, and dashboards so failures are caught before users notice",
+        "Work directly with data scientists to translate research code into maintainable, tested production systems",
+        "Drive MLOps culture and tooling decisions across the engineering team"
+      ]
+    }
+  ],
+  "employeeTraits": [
+    {
+      "key": "Requirements",
+      "values": [
+        "5+ years of software or ML engineering experience, with at least 2 years focused on ML infrastructure",
+        "Deep hands-on experience with PyTorch and PyTorch Lightning in production settings",
+        "Strong software engineering fundamentals: unit testing, CI/CD, code review, and documentation",
+        "Experience building and operating training pipelines on cloud infrastructure (AWS or GCP)",
+        "Solid understanding of model serving patterns, including batching, caching, and versioning",
+        "Ability to read and reason about research code and translate it into reliable systems"
+      ]
+    },
+    {
+      "key": "Nice-to-haves",
+      "values": [
+        "Experience with experiment tracking and model registry tools such as MLflow or Weights & Biases",
+        "Familiarity with vector databases or approximate nearest neighbor search (e.g. FAISS, Pinecone)",
+        "Prior work on ranking, retrieval, or recommendation infrastructure",
+        "Contributions to open-source ML or infrastructure projects",
+        "Experience with streaming data pipelines using Kafka, Flink, or similar"
+      ]
+    }
+  ]
+}

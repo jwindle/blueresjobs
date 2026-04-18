@@ -1,0 +1,53 @@
+{
+  "postName": "Senior Data Scientist – Acme Data Corporation 2025",
+  "jobTitle": "Senior Data Scientist",
+  "jobLocation": "Remote (US)",
+  "employmentType": "full-time",
+  "datePosted": "2025-01-01",
+  "validThrough": "2025-06-30",
+  "shortDescription": "Apply cutting-edge models and causal inference to turn complex behavioral data into insights that drive hiring decisions.",
+  "longDescription": "As a Senior Data Scientist at Acme Data Corporation, you will own the modeling layer of our recruiter-candidate matching platform. Your work will directly determine which candidates surface for which roles — and why.\n\nYou will design and evaluate models that go beyond correlation, using causal inference techniques to identify the factors that genuinely predict successful hires. You will collaborate closely with ML Engineering to take your models from research to production, and with the product team to translate insights into features users trust.\n\nThis is a high-autonomy role. You will define research directions, set evaluation standards, and be the internal authority on what the data actually says.",
+  "jobBenefits": "- Competitive salary and equity\n- Fully remote with flexible hours\n- Health, dental, and vision insurance\n- $2,500 annual learning and conference budget\n- Home office stipend",
+  "estimatedSalary": {
+    "min": 160000,
+    "max": 210000,
+    "currency": "USD",
+    "comment": "Base salary; total comp includes equity"
+  },
+  "jobTraits": [
+    {
+      "key": "Responsibilities",
+      "values": [
+        "Own the end-to-end modeling lifecycle for recruiter-candidate matching, from problem framing through production monitoring",
+        "Design observational studies and natural experiments to identify causal drivers of successful placements",
+        "Develop and maintain a suite of offline and online evaluation metrics that the team trusts",
+        "Partner with ML Engineering to productionize models and ensure they degrade gracefully under distribution shift",
+        "Synthesize findings into clear written reports and present recommendations to product and leadership",
+        "Mentor junior data scientists and establish best practices for statistical rigor across the team"
+      ]
+    }
+  ],
+  "employeeTraits": [
+    {
+      "key": "Requirements",
+      "values": [
+        "5+ years of applied data science experience in a production environment",
+        "Deep fluency in causal inference methods — propensity scoring, instrumental variables, difference-in-differences, or equivalent",
+        "Strong Python skills and hands-on experience with pandas, numpy, scikit-learn, and statsmodels",
+        "Track record of shipping models that measurably improved a product metric",
+        "Ability to communicate statistical concepts and uncertainty clearly to non-technical audiences",
+        "Comfort with ambiguity and experience defining research agendas from loosely specified goals"
+      ]
+    },
+    {
+      "key": "Nice-to-haves",
+      "values": [
+        "Experience with large language models or embedding-based similarity for text understanding",
+        "Familiarity with recommendation systems or learning-to-rank",
+        "Prior exposure to labor market dynamics, HR tech, or two-sided marketplace problems",
+        "Experience with A/B testing platforms and experimental design at scale",
+        "Publications or open-source contributions in ML, statistics, or econometrics"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "lexicon": 1,
+  "id": "org.blueres.jobs.jobPost",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "A job posting. Multiple records per repo, keyed by TID.",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": ["postName", "datePosted"],
+        "properties": {
+          "postName": {
+            "type": "string",
+            "description": "Descriptive, searchable name for this post (e.g. 'Senior Rust Engineer – Remote 2025')"
+          },
+          "applicationContact": {
+            "type": "string",
+            "description": "DID of the person to contact for applications"
+          },
+          "datePosted": {
+            "type": "string",
+            "format": "date",
+            "description": "ISO 8601 date the post was published (YYYY-MM-DD)"
+          },
+          "validThrough": {
+            "type": "string",
+            "format": "date",
+            "description": "ISO 8601 date through which the posting is valid (YYYY-MM-DD)"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Link to the canonical job posting or application page"
+          },
+          "jobTitle": {
+            "type": "string",
+            "description": "Official job title"
+          },
+          "jobLocation": {
+            "type": "string",
+            "description": "Location of the job, e.g. 'Remote', 'Austin, TX', 'Remote (US only)'"
+          },
+          "shortDescription": {
+            "type": "string",
+            "description": "Brief summary of the role. Markdown supported."
+          },
+          "longDescription": {
+            "type": "string",
+            "description": "Full job description. Markdown supported."
+          },
+          "employmentType": {
+            "type": "string",
+            "description": "e.g. full-time, part-time, contract, internship, temporary"
+          },
+          "estimatedSalary": {
+            "type": "ref",
+            "ref": "#salary",
+            "description": "Estimated compensation range"
+          },
+          "jobBenefits": {
+            "type": "string",
+            "description": "Description of benefits. Markdown supported."
+          },
+          "jobTraits": {
+            "type": "array",
+            "description": "Trait values for this role. Each entry maps an employer-defined job trait name to a list of selected values. The key is not validated against the employer record.",
+            "items": { "type": "ref", "ref": "#traitValues" }
+          },
+          "employeeTraits": {
+            "type": "array",
+            "description": "Trait values describing desired employee qualities. Each entry maps an employer-defined employee trait name to a list of selected values. The key is not validated against the employer record.",
+            "items": { "type": "ref", "ref": "#traitValues" }
+          }
+        }
+      }
+    },
+    "salary": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "min": { "type": "integer", "description": "Minimum salary / rate" },
+        "max": { "type": "integer", "description": "Maximum salary / rate" },
+        "currency": { "type": "string", "description": "ISO 4217 currency code, e.g. USD" },
+        "comment": { "type": "string", "description": "Additional context, e.g. 'per year', 'per hour'" }
+      }
+    },
+    "traitValues": {
+      "type": "object",
+      "description": "A generic key → [values] entry. The key is the trait name (e.g. from the employer's jobTraits or employeeTraits list); values are the selected options for this posting.",
+      "required": ["key", "values"],
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "Trait name, conventionally matching one defined in the employer record"
+        },
+        "values": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Selected values for this trait on this posting"
+        }
+      }
+    }
+  }
+}

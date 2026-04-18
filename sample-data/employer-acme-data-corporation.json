@@ -1,0 +1,21 @@
+{
+  "name": "Acme Data Corporation",
+  "shortDescription": "Building the future of talent matching through machine learning and causal inference.",
+  "longDescription": "Acme Data Corporation is developing an intelligent platform that connects recruiters with the right candidates by going beyond keyword matching. Our system models the underlying factors that make a hire successful — using cutting-edge ML, causal inference, and rich behavioral data to surface signal that traditional search misses.\n\nWe are a small, technically-focused team that values rigor, curiosity, and shipping real products. We work in the open, move fast without cutting corners on correctness, and care deeply about the quality of our models and systems.",
+  "jobTraits": [
+    {
+      "name": "Responsibilities",
+      "description": "What the role is accountable for day-to-day"
+    }
+  ],
+  "employeeTraits": [
+    {
+      "name": "Requirements",
+      "description": "Skills and experience required for the role"
+    },
+    {
+      "name": "Nice-to-haves",
+      "description": "Skills and experience that are valued but not required"
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "lexicon": 1,
+  "id": "org.blueres.jobs.employer",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "A single employer profile. Singleton record stored with rkey 'self'.",
+      "key": "literal:self",
+      "record": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Display name of the employer or organization"
+          },
+          "shortDescription": {
+            "type": "string",
+            "description": "One or two sentence overview of the employer"
+          },
+          "longDescription": {
+            "type": "string",
+            "description": "Extended description of the employer. Markdown supported."
+          },
+          "jobTraits": {
+            "type": "array",
+            "description": "Traits describing the nature of jobs at this employer",
+            "items": { "type": "ref", "ref": "#trait" }
+          },
+          "employeeTraits": {
+            "type": "array",
+            "description": "Traits describing the kind of employees who thrive here",
+            "items": { "type": "ref", "ref": "#trait" }
+          },
+          "image": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to employer logo or image"
+          }
+        }
+      }
+    },
+    "trait": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Trait name, used as both the identifier and display label"
+        },
+        "description": {
+          "type": "string",
+          "description": "Explanation of this trait"
+        },
+        "importance": {
+          "type": "integer",
+          "description": "Relative importance weight (higher = more important)"
+        }
+      }
+    }
+  }
+}
