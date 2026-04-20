@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "org.blueres.jobs.employer",
+  "title": "Employer",
+  "description": "A single employer profile. Singleton record stored with rkey 'self'.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Display name of the employer or organization"
+    },
+    "shortDescription": {
+      "type": "string",
+      "description": "One or two sentence overview of the employer"
+    },
+    "longDescription": {
+      "type": "string",
+      "description": "Extended description of the employer. Markdown supported."
+    },
+    "jobTraits": {
+      "type": "array",
+      "description": "Traits describing the nature of jobs at this employer",
+      "items": { "$ref": "#/$defs/trait" }
+    },
+    "employeeTraits": {
+      "type": "array",
+      "description": "Traits describing the kind of employees who thrive here",
+      "items": { "$ref": "#/$defs/trait" }
+    },
+    "image": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL to employer logo or image"
+    }
+  },
+  "$defs": {
+    "trait": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Trait name, used as both the identifier and display label"
+        },
+        "description": {
+          "type": "string",
+          "description": "Explanation of this trait"
+        },
+        "importance": {
+          "type": "integer",
+          "description": "Relative importance weight (higher = more important)"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

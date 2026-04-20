@@ -1,0 +1,101 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "org.blueres.jobs.jobPost",
+  "title": "Job Post",
+  "description": "A job posting. Multiple records per repo, keyed by TID.",
+  "type": "object",
+  "required": ["postName", "datePosted"],
+  "properties": {
+    "postName": {
+      "type": "string",
+      "description": "Descriptive, searchable name for this post (e.g. 'Senior Rust Engineer – Remote 2025')"
+    },
+    "applicationContact": {
+      "type": "string",
+      "description": "DID of the person to contact for applications"
+    },
+    "datePosted": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO 8601 date the post was published (YYYY-MM-DD)"
+    },
+    "validThrough": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO 8601 date through which the posting is valid (YYYY-MM-DD)"
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Link to the canonical job posting or application page"
+    },
+    "jobTitle": {
+      "type": "string",
+      "description": "Official job title"
+    },
+    "jobLocation": {
+      "type": "string",
+      "description": "Location of the job, e.g. 'Remote', 'Austin, TX', 'Remote (US only)'"
+    },
+    "shortDescription": {
+      "type": "string",
+      "description": "Brief summary of the role. Markdown supported."
+    },
+    "longDescription": {
+      "type": "string",
+      "description": "Full job description. Markdown supported."
+    },
+    "employmentType": {
+      "type": "string",
+      "description": "e.g. full-time, part-time, contract, internship, temporary"
+    },
+    "estimatedSalary": {
+      "$ref": "#/$defs/salary",
+      "description": "Estimated compensation range"
+    },
+    "jobBenefits": {
+      "type": "string",
+      "description": "Description of benefits. Markdown supported."
+    },
+    "jobTraits": {
+      "type": "array",
+      "description": "Trait values for this role, mapping employer-defined job trait names to selected values.",
+      "items": { "$ref": "#/$defs/traitValues" }
+    },
+    "employeeTraits": {
+      "type": "array",
+      "description": "Trait values describing desired employee qualities, mapping employer-defined employee trait names to selected values.",
+      "items": { "$ref": "#/$defs/traitValues" }
+    }
+  },
+  "$defs": {
+    "salary": {
+      "type": "object",
+      "properties": {
+        "min": { "type": "integer", "description": "Minimum salary / rate" },
+        "max": { "type": "integer", "description": "Maximum salary / rate" },
+        "currency": { "type": "string", "description": "ISO 4217 currency code, e.g. USD" },
+        "comment": { "type": "string", "description": "Additional context, e.g. 'per year', 'per hour'" }
+      },
+      "additionalProperties": false
+    },
+    "traitValues": {
+      "type": "object",
+      "description": "A trait name mapped to a list of selected values.",
+      "required": ["key", "values"],
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "Trait name, conventionally matching one defined in the employer record"
+        },
+        "values": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Selected values for this trait on this posting"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
