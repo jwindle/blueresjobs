@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
-import { getJobPostsPage } from '@/lib/actions';
+import { getJobPostsPage, removeJobPost } from '@/lib/actions';
 import type { JobPostEntry } from '@/lib/types';
 
 interface Props {
@@ -86,7 +86,12 @@ export default function JobFeed({ did, actor, isOwner }: Props) {
       <ul className="flex flex-col gap-3">
         {posts.map(entry => (
           <li key={entry.rkey}>
-            <JobCard entry={entry} actor={actor} isOwner={isOwner} />
+            <JobCard
+              entry={entry}
+              actor={actor}
+              isOwner={isOwner}
+              onDelete={(rkey) => setPosts(prev => prev.filter(p => p.rkey !== rkey))}
+            />
           </li>
         ))}
       </ul>
@@ -100,8 +105,27 @@ export default function JobFeed({ did, actor, isOwner }: Props) {
   );
 }
 
-function JobCard({ entry, actor, isOwner }: { entry: JobPostEntry; actor: string; isOwner: boolean }) {
+function JobCard({ entry, actor, isOwner, onDelete }: {
+  entry: JobPostEntry;
+  actor: string;
+  isOwner: boolean;
+  onDelete: (rkey: string) => void;
+}) {
   const { rkey, record } = entry;
+  const [deleting, setDeleting] = useState(false);
+
+  async function handleDelete() {
+    if (!confirm(`Delete "${record.postName}"?`)) return;
+    setDeleting(true);
+    const result = await removeJobPost(rkey);
+    if (result.error) {
+      alert(`Delete failed: ${result.error}`);
+      setDeleting(false);
+    } else {
+      onDelete(rkey);
+    }
+  }
+
   return (
     <div className="rounded-lg border p-4"
       style={{ borderColor: 'var(--border)', backgroundColor: 'var(--bg-subtle)' }}>
@@ -114,13 +138,23 @@ function JobCard({ entry, actor, isOwner }: { entry: JobPostEntry; actor: string
           {record.postName}
         </Link>
         {isOwner && (
-          <Link
-            href={`/edit/jobs/${rkey}`}
-            className="shrink-0 text-xs px-2 py-0.5 rounded border"
-            style={{ borderColor: 'var(--border)', color: 'var(--fg-muted)' }}
-          >
-            Edit
-          </Link>
+          <div className="flex shrink-0 gap-1">
+            <Link
+              href={`/edit/jobs/${rkey}`}
+              className="text-xs px-2 py-0.5 rounded border"
+              style={{ borderColor: 'var(--border)', color: 'var(--fg-muted)' }}
+            >
+              Edit
+            </Link>
+            <button
+              onClick={handleDelete}
+              disabled={deleting}
+              className="text-xs px-2 py-0.5 rounded border"
+              style={{ borderColor: 'var(--border)', color: 'var(--danger)' }}
+            >
+              {deleting ? '…' : 'Delete'}
+            </button>
+          </div>
         )}
       </div>
       <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-sm" style={{ color: 'var(--fg-muted)' }}>
