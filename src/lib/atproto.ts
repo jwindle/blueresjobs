@@ -196,8 +196,9 @@ export async function deleteJobPost(
   did: string,
   rkey: string,
 ): Promise<void> {
-  await agent.com.atproto.repo.applyWrites({
+  await agent.com.atproto.repo.deleteRecord({
     repo: did,
-    writes: [{ $type: 'com.atproto.repo.applyWrites#delete', collection: NSID.JOB_POST, rkey }],
+    collection: NSID.JOB_POST,
+    rkey,
   });
 }

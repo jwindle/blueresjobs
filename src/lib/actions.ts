@@ -80,6 +80,7 @@ export async function saveJobPost(
       return await createJobPost(agent, session.did, record);
     }
   } catch (e) {
+    console.error('[saveJobPost] failed:', e);
     return { error: String(e) };
   }
 }
@@ -97,6 +98,7 @@ export async function removeJobPost(
     await deleteJobPost(agent, session.did, rkey);
     return {};
   } catch (e) {
+    console.error('[removeJobPost] failed:', e);
     return { error: String(e) };
   }
 }
