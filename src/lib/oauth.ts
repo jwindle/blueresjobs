@@ -9,25 +9,16 @@ const redis = new Redis({
 });
 
 const REDIS_PREFIX = process.env.REDIS_PREFIX ?? 'blueresjobs';
-const DEBUG_DPOP = process.env.DEBUG_DPOP === 'true';
 
 function redisStore(prefix: string) {
   return {
     async get(key: string) {
-      const redisKey = `${REDIS_PREFIX}:${prefix}:${key}`;
-      const value = await redis.get(redisKey);
-      if (DEBUG_DPOP && prefix === 'dpop-nonce') {
-        console.log(`[dpop-nonce] get ${redisKey} →`, value === null ? 'null (missing)' : value);
-      }
-      // Redis returns null for missing keys; SimpleStore expects undefined
+      const value = await redis.get(`${REDIS_PREFIX}:${prefix}:${key}`);
+      // Redis returns null for missing keys; the SimpleStore interface expects undefined.
       return value === null ? undefined : (value as string);
     },
     async set(key: string, value: unknown) {
-      const redisKey = `${REDIS_PREFIX}:${prefix}:${key}`;
-      if (DEBUG_DPOP && prefix === 'dpop-nonce') {
-        console.log(`[dpop-nonce] set ${redisKey} →`, value);
-      }
-      await redis.set(redisKey, value as string);
+      await redis.set(`${REDIS_PREFIX}:${prefix}:${key}`, value as string);
     },
     async del(key: string) {
       await redis.del(`${REDIS_PREFIX}:${prefix}:${key}`);
@@ -35,42 +26,65 @@ function redisStore(prefix: string) {
   };
 }
 
-console.log(`[oauth] USE_REDIS_DPOP_NONCE=${process.env.USE_REDIS_DPOP_NONCE} DEBUG_DPOP=${process.env.DEBUG_DPOP}`);
-
-// The @atproto dpopFetchWrapper passes a Request object to the inner fetch.
-// In some Node.js/Vercel environments this triggers "expected non-null body source"
-// from undici when the request was constructed with duplex:'half'. Decomposing the
-// Request back into (url, init) with a plain ArrayBuffer body avoids that path.
+// ─── compatFetch ─────────────────────────────────────────────────────────────
+//
+// WHY THIS EXISTS
+//
+// @atproto/oauth-client's dpopFetchWrapper (fetch-dpop.ts) builds a Request
+// object internally — new Request(url, init) — where init.duplex is 'half'
+// (required by the XRPC layer for streaming bodies, even for small JSON
+// payloads). It then calls fetch(request) passing that Request object as the
+// sole argument.
+//
+// In the Vercel production Node.js environment this throws:
+//   TypeError: expected non-null body source
+//
+// The error comes from undici's extractBody, which is called when fetch()
+// processes the Request object. Something about how that Request was
+// constructed with duplex:'half' causes the body's internal `source`
+// property to be null in Vercel's runtime, which undici rejects.
+//
+// The same code works fine in local dev because the dev server's Node.js
+// runtime handles the Request object differently.
+//
+// THE FIX
+//
+// When the inner fetch is called with a Request object (the only path that
+// triggers this), decompose it back into (url, init) with the body read out
+// as a plain ArrayBuffer. Calling fetch(url, { body: ArrayBuffer }) avoids
+// the problematic Request-object code path entirely.
+//
+// Consuming the Request body here is safe: dpopFetchWrapper retries are
+// built from the original (url, init) arguments, not from the consumed
+// Request object.
+//
+// FUTURE CHECKS
+//
+// If writes start failing again with "expected non-null body source" after a
+// Node.js or @atproto/oauth-client upgrade, check whether the upstream fix
+// has landed — specifically whether dpopFetchWrapper now passes (url, init)
+// instead of a Request object to its inner fetch. If so, this wrapper can be
+// removed and the oauthClient can use the default fetch again.
+//
+// To diagnose, set DEBUG_DPOP=true in Vercel env vars and redeploy. You
+// should see paired log lines for every DPoP-signed request:
+//   [dpop-fetch] → POST <url> nonce=<value or (none)>
+//   [dpop-fetch] ← <status> DPoP-Nonce=<value> WWW-Auth=<value>
+// If the ← line is missing, the inner fetch is still throwing.
+// Add the debug logging back to compatFetch to re-enable this.
+//
 async function compatFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
   if (input instanceof Request) {
     const req = input;
     const headers: Record<string, string> = {};
     req.headers.forEach((v, k) => { headers[k] = v; });
     const body = req.body ? await req.arrayBuffer() : undefined;
-
-    if (DEBUG_DPOP) {
-      try {
-        const dpop = headers['dpop'];
-        const payload = dpop ? JSON.parse(atob(dpop.split('.')[1])) : null;
-        console.log(`[dpop-fetch] → ${req.method} ${req.url} nonce=${payload?.nonce ?? '(none)'}`);
-      } catch {
-        console.log(`[dpop-fetch] → ${req.method} ${req.url} (could not decode DPoP)`);
-      }
-    }
-
-    const res = await globalThis.fetch(req.url, { method: req.method, headers, body });
-
-    if (DEBUG_DPOP) {
-      console.log(`[dpop-fetch] ← ${res.status} DPoP-Nonce=${res.headers.get('DPoP-Nonce') ?? '(none)'} WWW-Auth=${res.headers.get('WWW-Authenticate') ?? '(none)'}`);
-    }
-
-    return res;
+    return globalThis.fetch(req.url, { method: req.method, headers, body });
   }
   return globalThis.fetch(input as RequestInfo, init);
 }
 
-const useRedisNonce = process.env.USE_REDIS_DPOP_NONCE === 'true';
-const dpopNonceStore = useRedisNonce ? redisStore('dpop-nonce') : undefined;
+// ─── OAuth client ─────────────────────────────────────────────────────────────
 
 export const oauthClient = new NodeOAuthClient({
   clientMetadata: {
@@ -89,8 +103,6 @@ export const oauthClient = new NodeOAuthClient({
   stateStore: redisStore('state') as any,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   sessionStore: redisStore('session') as any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ...(dpopNonceStore && { dpopNonceCache: dpopNonceStore as any }),
   fetch: compatFetch,
   requestLock: requestLocalLock,
 });
