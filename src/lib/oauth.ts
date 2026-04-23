@@ -37,26 +37,36 @@ function redisStore(prefix: string) {
 
 console.log(`[oauth] USE_REDIS_DPOP_NONCE=${process.env.USE_REDIS_DPOP_NONCE} DEBUG_DPOP=${process.env.DEBUG_DPOP}`);
 
-function debugFetch(inner: typeof globalThis.fetch): typeof globalThis.fetch {
-  return async function (this: unknown, input: RequestInfo | URL, init?: RequestInit) {
-    const url = typeof input === 'string' ? input : input instanceof URL ? input.href : (input as Request).url;
-    const reqHeaders = input instanceof Request ? input.headers : init?.headers instanceof Headers ? init.headers : undefined;
-    const dpopHeader = reqHeaders instanceof Headers ? reqHeaders.get('DPoP') : undefined;
-    if (dpopHeader) {
+// The @atproto dpopFetchWrapper passes a Request object to the inner fetch.
+// In some Node.js/Vercel environments this triggers "expected non-null body source"
+// from undici when the request was constructed with duplex:'half'. Decomposing the
+// Request back into (url, init) with a plain ArrayBuffer body avoids that path.
+async function compatFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+  if (input instanceof Request) {
+    const req = input;
+    const headers: Record<string, string> = {};
+    req.headers.forEach((v, k) => { headers[k] = v; });
+    const body = req.body ? await req.arrayBuffer() : undefined;
+
+    if (DEBUG_DPOP) {
       try {
-        const payload = JSON.parse(atob(dpopHeader.split('.')[1]));
-        console.log(`[dpop-fetch] → ${(input instanceof Request ? input.method : init?.method) ?? 'GET'} ${url} nonce=${payload.nonce ?? '(none)'}`);
+        const dpop = headers['dpop'];
+        const payload = dpop ? JSON.parse(atob(dpop.split('.')[1])) : null;
+        console.log(`[dpop-fetch] → ${req.method} ${req.url} nonce=${payload?.nonce ?? '(none)'}`);
       } catch {
-        console.log(`[dpop-fetch] → ${(input instanceof Request ? input.method : init?.method) ?? 'GET'} ${url} (could not decode DPoP)`);
+        console.log(`[dpop-fetch] → ${req.method} ${req.url} (could not decode DPoP)`);
       }
     }
-    const res = await inner.call(this, input as RequestInfo, init);
-    if (dpopHeader) {
-      const dpopNonce = res.headers.get('DPoP-Nonce');
-      console.log(`[dpop-fetch] ← ${res.status} DPoP-Nonce=${dpopNonce ?? '(none)'} WWW-Auth=${res.headers.get('WWW-Authenticate') ?? '(none)'}`);
+
+    const res = await globalThis.fetch(req.url, { method: req.method, headers, body });
+
+    if (DEBUG_DPOP) {
+      console.log(`[dpop-fetch] ← ${res.status} DPoP-Nonce=${res.headers.get('DPoP-Nonce') ?? '(none)'} WWW-Auth=${res.headers.get('WWW-Authenticate') ?? '(none)'}`);
     }
+
     return res;
-  } as typeof globalThis.fetch;
+  }
+  return globalThis.fetch(input as RequestInfo, init);
 }
 
 const useRedisNonce = process.env.USE_REDIS_DPOP_NONCE === 'true';
@@ -81,6 +91,6 @@ export const oauthClient = new NodeOAuthClient({
   sessionStore: redisStore('session') as any,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ...(dpopNonceStore && { dpopNonceCache: dpopNonceStore as any }),
-  ...(DEBUG_DPOP && { fetch: debugFetch(globalThis.fetch) }),
+  fetch: compatFetch,
   requestLock: requestLocalLock,
 });
