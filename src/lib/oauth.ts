@@ -38,20 +38,19 @@ function redisStore(prefix: string) {
 console.log(`[oauth] USE_REDIS_DPOP_NONCE=${process.env.USE_REDIS_DPOP_NONCE} DEBUG_DPOP=${process.env.DEBUG_DPOP}`);
 
 function debugFetch(inner: typeof globalThis.fetch): typeof globalThis.fetch {
-  return async function (input, init) {
+  return async function (this: unknown, input: RequestInfo | URL, init?: RequestInit) {
     const url = typeof input === 'string' ? input : input instanceof URL ? input.href : (input as Request).url;
-    const dpopHeader = init?.headers instanceof Headers
-      ? init.headers.get('DPoP')
-      : (init?.headers as Record<string, string>)?.['DPoP'];
+    const reqHeaders = input instanceof Request ? input.headers : init?.headers instanceof Headers ? init.headers : undefined;
+    const dpopHeader = reqHeaders instanceof Headers ? reqHeaders.get('DPoP') : undefined;
     if (dpopHeader) {
       try {
         const payload = JSON.parse(atob(dpopHeader.split('.')[1]));
-        console.log(`[dpop-fetch] → ${init?.method ?? 'GET'} ${url} nonce=${payload.nonce ?? '(none)'}`);
+        console.log(`[dpop-fetch] → ${(input instanceof Request ? input.method : init?.method) ?? 'GET'} ${url} nonce=${payload.nonce ?? '(none)'}`);
       } catch {
-        console.log(`[dpop-fetch] → ${init?.method ?? 'GET'} ${url} (could not decode DPoP)`);
+        console.log(`[dpop-fetch] → ${(input instanceof Request ? input.method : init?.method) ?? 'GET'} ${url} (could not decode DPoP)`);
       }
     }
-    const res = await inner.call(this as unknown, input as RequestInfo, init);
+    const res = await inner.call(this, input as RequestInfo, init);
     if (dpopHeader) {
       const dpopNonce = res.headers.get('DPoP-Nonce');
       console.log(`[dpop-fetch] ← ${res.status} DPoP-Nonce=${dpopNonce ?? '(none)'} WWW-Auth=${res.headers.get('WWW-Authenticate') ?? '(none)'}`);
