@@ -41,5 +41,7 @@ export const oauthClient = new NodeOAuthClient({
   stateStore: redisStore('state') as any,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   sessionStore: redisStore('session') as any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ...(process.env.USE_REDIS_DPOP_NONCE === 'true' && { dpopNonceCache: redisStore('dpop-nonce') as any }),
   requestLock: requestLocalLock,
 });
