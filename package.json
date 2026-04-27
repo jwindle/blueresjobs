@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "bulk-upload": "tsx scripts/bulk-upload.ts",
+    "bulk-delete-job-posts": "tsx scripts/bulk-delete-job-posts.ts",
     "delete-job-post": "tsx scripts/delete-job-post.ts"
   },
   "dependencies": {

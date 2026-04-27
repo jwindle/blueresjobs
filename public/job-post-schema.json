@@ -66,6 +66,10 @@
       "type": "array",
       "description": "Trait values describing desired employee qualities, mapping employer-defined employee trait names to selected values.",
       "items": { "$ref": "#/$defs/traitValues" }
+    },
+    "active": {
+      "type": "boolean",
+      "description": "Whether this post is, or has been, confirmed open for hiring. Absence or false means unconfirmed or closed."
     }
   },
   "$defs": {

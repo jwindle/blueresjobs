@@ -41,6 +41,7 @@ export default function JobPostForm({ did, actor, rkey, initial = {} }: Props) {
 
   const [jobTraits, setJobTraits] = useState<TraitValues[]>(initial.jobTraits ?? []);
   const [employeeTraits, setEmployeeTraits] = useState<TraitValues[]>(initial.employeeTraits ?? []);
+  const [active, setActive] = useState(initial.active ?? false);
 
   const [error, setError] = useState<string | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
@@ -89,6 +90,7 @@ export default function JobPostForm({ did, actor, rkey, initial = {} }: Props) {
         setSalaryComment(sal?.comment ?? '');
         setJobTraits(data.jobTraits ?? []);
         setEmployeeTraits(data.employeeTraits ?? []);
+        setActive(data.active ?? false);
         setImportError(null);
       } catch {
         setImportError('Could not parse JSON file.');
@@ -124,6 +126,7 @@ export default function JobPostForm({ did, actor, rkey, initial = {} }: Props) {
       } : undefined,
       jobTraits: jobTraits?.length ? jobTraits : undefined,
       employeeTraits: employeeTraits?.length ? employeeTraits : undefined,
+      active: active || undefined,
     };
 
     const result = await saveJobPost(record, rkey);
@@ -159,6 +162,16 @@ export default function JobPostForm({ did, actor, rkey, initial = {} }: Props) {
         <input required value={postName} onChange={e => setPostName(e.target.value)}
           placeholder="Senior Rust Engineer – Remote 2025" className={inputCls} style={inputStyle} />
       </Field>
+
+      <label className="flex items-center gap-2 text-sm cursor-pointer" style={{ color: 'var(--fg)' }}>
+        <input
+          type="checkbox"
+          checked={active}
+          onChange={e => setActive(e.target.checked)}
+          className="w-4 h-4"
+        />
+        Active — confirmed open for hiring
+      </label>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field label="Job title">

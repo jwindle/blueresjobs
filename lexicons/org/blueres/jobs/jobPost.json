@@ -71,6 +71,10 @@
             "type": "array",
             "description": "Trait values describing desired employee qualities. Each entry maps an employer-defined employee trait name to a list of selected values. The key is not validated against the employer record.",
             "items": { "type": "ref", "ref": "#traitValues" }
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Whether this post is, or has been, confirmed open for hiring. Absence or false means unconfirmed or closed."
           }
         }
       }

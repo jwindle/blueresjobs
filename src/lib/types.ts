@@ -46,6 +46,7 @@ export interface JobPostRecord {
   jobBenefits?: string;
   jobTraits?: TraitValues[];
   employeeTraits?: TraitValues[];
+  active?: boolean;
 }
 
 // A job post as returned from the PDS, with its AT Protocol coordinates attached.

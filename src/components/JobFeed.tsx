@@ -84,16 +84,18 @@ export default function JobFeed({ did, actor, isOwner }: Props) {
       )}
 
       <ul className="flex flex-col gap-3">
-        {posts.map(entry => (
-          <li key={entry.rkey}>
-            <JobCard
-              entry={entry}
-              actor={actor}
-              isOwner={isOwner}
-              onDelete={(rkey) => setPosts(prev => prev.filter(p => p.rkey !== rkey))}
-            />
-          </li>
-        ))}
+        {posts
+          .filter(entry => isOwner || entry.record.active)
+          .map(entry => (
+            <li key={entry.rkey}>
+              <JobCard
+                entry={entry}
+                actor={actor}
+                isOwner={isOwner}
+                onDelete={(rkey) => setPosts(prev => prev.filter(p => p.rkey !== rkey))}
+              />
+            </li>
+          ))}
       </ul>
 
       <div ref={sentinelRef} className="h-1" />
@@ -135,7 +137,7 @@ function JobCard({ entry, actor, isOwner, onDelete }: {
           className="font-semibold hover:underline"
           style={{ color: 'var(--accent)' }}
         >
-          {record.postName}
+          {record.postName}{isOwner && !record.active ? ' (Inactive)' : ''}
         </Link>
         {isOwner && (
           <div className="flex shrink-0 gap-1">
