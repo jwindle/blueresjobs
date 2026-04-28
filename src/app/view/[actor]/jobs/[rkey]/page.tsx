@@ -32,23 +32,23 @@ export default async function ViewJobPostPage({ params }: Props) {
     <article className="flex flex-col gap-6">
       <div className="flex items-start justify-between gap-4">
         <h1 className="text-2xl font-bold" style={{ color: 'var(--fg)' }}>{record.postName}</h1>
-        <div className="flex shrink-0 items-center gap-2">
-          <a
-            href={`/json/${encodeURIComponent(displayActor)}/${rkey}`}
-            className="text-xs px-2 py-1 rounded border"
-            style={{ borderColor: 'var(--border)', color: 'var(--fg-muted)' }}
-          >
-            JSON
-          </a>
+        <div className="flex shrink-0 items-center gap-3">
           {isOwner && (
             <Link
               href={`/edit/jobs/${rkey}`}
-              className="px-3 py-1.5 rounded text-sm font-medium"
-              style={{ backgroundColor: 'var(--accent)', color: 'var(--accent-fg)' }}
+              className="text-xs px-2 py-0.5 rounded border"
+              style={{ borderColor: 'var(--border)', color: 'var(--fg-muted)' }}
             >
               Edit
             </Link>
           )}
+          <a
+            href={`/json/${encodeURIComponent(displayActor)}/${rkey}`}
+            className="text-xs"
+            style={{ color: 'var(--fg-muted)' }}
+          >
+            JSON
+          </a>
         </div>
       </div>
 

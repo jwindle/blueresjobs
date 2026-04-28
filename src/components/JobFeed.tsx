@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
-import { getJobPostsPage, removeJobPost } from '@/lib/actions';
+import { getJobPostsPage, removeJobPost, duplicateJobPost } from '@/lib/actions';
 import type { JobPostEntry } from '@/lib/types';
 
 interface Props {
@@ -93,6 +93,7 @@ export default function JobFeed({ did, actor, isOwner }: Props) {
                 actor={actor}
                 isOwner={isOwner}
                 onDelete={(rkey) => setPosts(prev => prev.filter(p => p.rkey !== rkey))}
+                onDuplicate={() => { setPosts([]); setCursor(undefined); setHasMore(true); fetchPage(); }}
               />
             </li>
           ))}
@@ -107,14 +108,16 @@ export default function JobFeed({ did, actor, isOwner }: Props) {
   );
 }
 
-function JobCard({ entry, actor, isOwner, onDelete }: {
+function JobCard({ entry, actor, isOwner, onDelete, onDuplicate }: {
   entry: JobPostEntry;
   actor: string;
   isOwner: boolean;
   onDelete: (rkey: string) => void;
+  onDuplicate: (rkey: string) => void;
 }) {
   const { rkey, record } = entry;
   const [deleting, setDeleting] = useState(false);
+  const [duplicating, setDuplicating] = useState(false);
 
   async function handleDelete() {
     if (!confirm(`Delete "${record.postName}"?`)) return;
@@ -125,6 +128,17 @@ function JobCard({ entry, actor, isOwner, onDelete }: {
       setDeleting(false);
     } else {
       onDelete(rkey);
+    }
+  }
+
+  async function handleDuplicate() {
+    setDuplicating(true);
+    const result = await duplicateJobPost(rkey);
+    if ('error' in result) {
+      alert(`Duplicate failed: ${result.error}`);
+      setDuplicating(false);
+    } else {
+      onDuplicate(result.rkey);
     }
   }
 
@@ -141,6 +155,14 @@ function JobCard({ entry, actor, isOwner, onDelete }: {
         </Link>
         {isOwner && (
           <div className="flex shrink-0 gap-1">
+            <button
+              onClick={handleDuplicate}
+              disabled={duplicating}
+              className="text-xs px-2 py-0.5 rounded border"
+              style={{ borderColor: 'var(--border)', color: 'var(--fg-muted)' }}
+            >
+              {duplicating ? '…' : 'Duplicate'}
+            </button>
             <Link
               href={`/edit/jobs/${rkey}`}
               className="text-xs px-2 py-0.5 rounded border"

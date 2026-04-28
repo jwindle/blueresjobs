@@ -89,7 +89,7 @@ export default function TraitValuesEditor({ label, value, onChange }: Props) {
             </button>
           </div>
           <textarea
-            rows={3}
+            rows={6}
             value={texts[trait.key] ?? ''}
             onChange={e => handleTextChange(trait.key, e.target.value)}
             onBlur={() => handleBlur(trait.key)}

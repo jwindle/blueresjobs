@@ -1,7 +1,7 @@
 'use server';
 
 import { getSession } from './auth';
-import { getAgent, fetchJobPostsPage, createJobPost, putJobPost, deleteJobPost, putEmployer } from './atproto';
+import { getAgent, fetchJobPost, fetchJobPostsPage, createJobPost, putJobPost, deleteJobPost, putEmployer } from './atproto';
 import type { EmployerRecord, JobPostRecord, JobPostEntry } from './types';
 import { AtpAgent } from '@atproto/api';
 
@@ -81,6 +81,32 @@ export async function saveJobPost(
     }
   } catch (e) {
     console.error('[saveJobPost] failed:', e);
+    return { error: String(e) };
+  }
+}
+
+export async function duplicateJobPost(
+  rkey: string,
+): Promise<{ rkey: string } | { error: string }> {
+  const session = await getSession();
+  if (!session.did) return { error: 'Unauthorized' };
+
+  const agent = await getAgent();
+  if (!agent) return { error: 'No active session' };
+
+  try {
+    const existing = await fetchJobPost(session.did, rkey);
+    if (!existing) return { error: 'Job post not found' };
+
+    const copy = {
+      ...existing.record,
+      postName: existing.record.postName ? `${existing.record.postName} (copy)` : 'Copy',
+      active: undefined,
+    };
+
+    const result = await createJobPost(agent, session.did, copy);
+    return { rkey: result.rkey };
+  } catch (e) {
     return { error: String(e) };
   }
 }
